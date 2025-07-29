@@ -1,0 +1,17 @@
+Hello there,
+
+You've been invited to take part in our voting.
+We've prepared a unique key for you to confirm your 
+identity especially for this occasion.
+
+Your code: {{ voter.verification_code }}
+
+Please note that the voting will be available during the designated period:
+
+Starting date: {{ election.start_date }}
+Ending date:   {{ election.end_date }}
+
+For more information please visit our website or send us an email.
+
+We wish you a great day,
+Ethervote Team
