@@ -39,6 +39,7 @@ coverage/
 htmlcov/
 *.cover
 *.py,cover
+backend/tools/management/voters_list.csv
 
 # DJANGO MIGRATION FILES
 **/migrations/*.py
