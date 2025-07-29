@@ -50,6 +50,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env
 frontend/.env.*
+frontend/.vscode
 
 # === SOLIDITY ===
 frontend/hardhat.cache/
@@ -61,6 +62,8 @@ frontend/typechain-types/
 *.sol.ts
 *.abi
 *.bin
+blockchain/node_modules/
+blockchain/ignition/
 
 # === POSTGRES ===
 pgdata/
