@@ -39,6 +39,7 @@ coverage/
 htmlcov/
 *.cover
 *.py,cover
+backend/tools/management/voters_list.csv
 
 # DJANGO MIGRATION FILES
 **/migrations/*.py
@@ -50,6 +51,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env
 frontend/.env.*
+frontend/.vscode
 
 # === SOLIDITY ===
 frontend/hardhat.cache/
@@ -61,6 +63,8 @@ frontend/typechain-types/
 *.sol.ts
 *.abi
 *.bin
+blockchain/node_modules/
+blockchain/ignition/
 
 # === POSTGRES ===
 pgdata/
