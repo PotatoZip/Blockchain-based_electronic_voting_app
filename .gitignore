@@ -52,6 +52,7 @@ frontend/dist/
 frontend/.env
 frontend/.env.*
 frontend/.vscode
+frontend/package-lock.json
 
 # === SOLIDITY ===
 frontend/hardhat.cache/
