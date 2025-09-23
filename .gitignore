@@ -53,6 +53,8 @@ frontend/.env
 frontend/.env.*
 frontend/.vscode
 frontend/package-lock.json
+frontend/.vite/*
+frontend/components.d.ts
 
 # === SOLIDITY ===
 frontend/hardhat.cache/
