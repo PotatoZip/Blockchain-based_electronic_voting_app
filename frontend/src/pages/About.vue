@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-5xl mt-20">
       <div class="grid gap-6 sm:grid-cols-2">
         <div
-          class="bg-white rounded-3xl shadow border border-gray-100 shadow-sm p-6"
+          class="bg-gray-100 rounded-3xl border border-gray-100 shadow-2xl p-6"
         >
           <div class="flex items-center gap-2 mb-2 text-indigo-600">
             <Icon icon="grommet-icons:contact" width="24" height="24" />
@@ -23,7 +23,7 @@
           </p>
         </div>
         <div
-          class="bg-white rounded-3xl shadow border border-gray-100 shadow-sm p-6"
+          class="bg-gray-100 rounded-3xl border border-gray-100 shadow-2xl p-6"
         >
           <div class="flex items-center gap-2 mb-2 text-indigo-600">
             <Icon icon="fluent:person-24-filled" width="24" height="24" />
@@ -38,8 +38,10 @@
           </p>
         </div>
       </div>
-      <div class="mt-8 grid gap-4">
-        <div class="bg-white rounded-3xl shadow border border-gray-100 p-6">
+      <div class="mt-8 grid gap-4 mb-4">
+        <div
+          class="bg-gray-100 rounded-3xl border border-gray-100 shadow-2xl p-6"
+        >
           <div class="flex items-center gap-2 mb-2 text-indigo-600">
             <Icon
               icon="streamline-ultimate:contact-us-faq"
