@@ -218,7 +218,7 @@ function fmt(d: string) {
           </div>
 
           <RouterLink
-            :to="`/elections/${el.id}`"
+            :to="`/elections/${el.id}/verify`"
             class="mt-4 inline-flex items-center gap-2 text-indigo-700 hover:text-indigo-800 font-medium self-start"
           >
             Take part
