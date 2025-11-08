@@ -1,9 +1,14 @@
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env as early as possible so settings below
+# (like EMAIL_*) can read them.
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -93,8 +98,6 @@ WSGI_APPLICATION = "voting_app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-load_dotenv()
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -147,3 +150,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+def get_env(name, default=None, required=False):
+    v = os.getenv(name, default)
+    if required and not v:
+        raise ImproperlyConfigured(f"Missing env var: {name}")
+    return v
+
+
+SECRET_SALT = get_env("SECRET_SALT", required=True)
+ENCRYPTION_KEY = get_env("ENCRYPTION_KEY", required=True)

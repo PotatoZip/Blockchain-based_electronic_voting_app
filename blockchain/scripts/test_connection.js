@@ -1,22 +1,16 @@
+// scripts/test_connection.js
 require("dotenv").config();
-const { ethers } = require("ethers");
+const ethers = require("ethers"); // v6 – UWAGA: bez destrukturyzacji
 
-// 1. Provider
-const provider = new ethers.providers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
+async function main() {
+  const url = `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+  const provider = new ethers.JsonRpcProvider(url);
 
-// 2. Tworzymy portfel
-const wallet = ethers.Wallet.createRandom();
+  const net = await provider.getNetwork();
+  const block = await provider.getBlockNumber();
 
-console.log("📬 Adres publiczny:", wallet.address);
-console.log("🔐 Klucz prywatny:", wallet.privateKey);
-
-// 3. Łączymy portfel z providerem
-const connectedWallet = wallet.connect(provider);
-
-// 4. Pobieramy saldo
-async function checkBalance() {
-    const balance = await connectedWallet.getBalance();
-    console.log("💰 Saldo:", ethers.utils.formatEther(balance), "ETH");
+  console.log("✅ Network:", net.name, "chainId:", Number(net.chainId));
+  console.log("🔢 Latest block:", block);
 }
 
-checkBalance();
+main().catch(console.error);

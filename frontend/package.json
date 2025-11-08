@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.2.6",
     "@heroicons/vue": "^2.2.0",
+    "ethers": "^6.15.0",
     "iconify": "^1.4.0",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"

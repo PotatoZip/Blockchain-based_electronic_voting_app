@@ -47,6 +47,10 @@
               <span class="font-semibold text-indigo-600">code</span> provided
               in email message
             </li>
+            <li>
+              Set your local password which will be neccessary for this and
+              future votings on this browser(remember it)
+            </li>
             <li>Take part in voting by casting your vote</li>
             <li>Wait for the results to be published after voting ends</li>
           </ol>
