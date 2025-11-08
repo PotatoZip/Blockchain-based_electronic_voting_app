@@ -68,6 +68,9 @@ frontend/typechain-types/
 *.bin
 blockchain/node_modules/
 blockchain/ignition/
+blockchain/cache/
+blockchain/artifacts/
+blockchain/typechain-types/
 
 # === POSTGRES ===
 pgdata/
