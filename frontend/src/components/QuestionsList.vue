@@ -28,10 +28,25 @@ import { Icon } from "@iconify/vue";
 
 type Question = { question: string; answer: string };
 const questions: Question[] = [
-  { question: "How to enrol for voting?", answer: "fuebvowene" },
-  { question: "How to enrol for voting?", answer: "fuebvowene" },
-  { question: "How to enrol for voting?", answer: "fuebvowene" },
-  { question: "How to enrol for voting?", answer: "fuebvowene" },
-  { question: "How to enrol for voting?", answer: "fuebvowene" },
+  {
+    question: "How to enrol for voting?",
+    answer:
+      "You can't enrol for voting. If you should be able to participate in the vote, your organization will certainly ask us to register you.",
+  },
+  {
+    question: "How will I know If I am enroled?",
+    answer:
+      "If the voting is visible on our website then you should have received an email with voting access codes",
+  },
+  {
+    question: "What if I can't see mail message?",
+    answer:
+      "If you don't recieved mail for us or you just simply lost it then feel free to contact us via email message",
+  },
+  {
+    question: "Can I propose next voting?",
+    answer:
+      "Of course! Let us know about it in mail message and will be glad to happy to prepare it for you",
+  },
 ];
 </script>

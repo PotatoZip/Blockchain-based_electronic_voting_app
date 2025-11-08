@@ -217,11 +217,24 @@ function fmt(d: string) {
             </div>
           </div>
 
+          <template v-if="el.status === 'upcoming'">
+            <span
+              class="mt-4 inline-flex items-center gap-2 text-gray-500 font-medium self-start"
+            >
+              Scheduled
+              <Icon icon="mdi:calendar" class="w-4 h-4" />
+            </span>
+          </template>
           <RouterLink
-            :to="`/elections/${el.id}/verify`"
+            v-else
+            :to="
+              el.status === 'archive'
+                ? `/elections/${el.id}/results`
+                : `/elections/${el.id}/verify`
+            "
             class="mt-4 inline-flex items-center gap-2 text-indigo-700 hover:text-indigo-800 font-medium self-start"
           >
-            Take part
+            {{ el.status === "archive" ? "See results" : "Take part" }}
             <Icon icon="mdi:chevron-right" class="w-4 h-4" />
           </RouterLink>
         </article>
