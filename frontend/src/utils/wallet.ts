@@ -1,13 +1,14 @@
 import { Wallet } from "ethers";
 
+// Key used to store the encrypted keystore JSON in localStorage
 const KEYSTORE_KEY = "evote_keystore";
-
-// In-memory password cache (cleared when page reloads)
 let memoryPasswordCache: string | null = null;
 
-// By default we cache the password in memory only (cleared when the page reloads).
-// This avoids prompting the user repeatedly during the current page session while ensuring
-// the password is never stored in any browser storage.
+/**
+ * By default we cache the password in memory only (cleared when the page reloads)
+ * This avoids prompting the user repeatedly during the current page session while ensuring
+ * the password is never stored in any browser storage
+ */
 async function defaultPasswordGetter(): Promise<string> {
   if (memoryPasswordCache) return memoryPasswordCache;
   const p = prompt("Enter wallet password:");
@@ -16,9 +17,13 @@ async function defaultPasswordGetter(): Promise<string> {
   return p;
 }
 
+/**
+ * Ensure that a wallet exists, generating a new one if necessary
+ */
 export async function ensureWallet(
   passwordGetter?: () => Promise<string>
 ): Promise<Wallet> {
+  // Check if we have an existing keystore
   const pwGetter = passwordGetter ?? defaultPasswordGetter;
   const existing = localStorage.getItem(KEYSTORE_KEY);
   if (existing) {
@@ -30,12 +35,11 @@ export async function ensureWallet(
       )) as unknown as Wallet;
       return w;
     } catch (error) {
-      // Clear the cached password since it was wrong
       memoryPasswordCache = null;
       throw new Error("You entered wrong wallet password");
     }
   }
-  // brak portfela – generujemy
+  // If wallet does not exist – generate
   const wallet = Wallet.createRandom() as unknown as Wallet;
   const pass = await pwGetter();
   const json = await wallet.encrypt(pass);
@@ -50,6 +54,9 @@ export async function getAddress(
   return w.address;
 }
 
+/**
+ * Encrypt and sign a message with the wallet's private key
+ */
 export async function signMessage(
   message: string,
   passwordGetter?: () => Promise<string>
@@ -60,7 +67,7 @@ export async function signMessage(
 }
 
 /**
- * Clear cached memory password (keeps keystore JSON in localStorage).
+ * Clear cached memory password (keeps keystore JSON in localStorage)
  * Use when user explicitly logs out of the session but wants to keep the keystore.
  */
 export function clearWalletSession(): void {
@@ -68,28 +75,19 @@ export function clearWalletSession(): void {
 }
 
 /**
- * Remove keystore and memory password (full logout / remove wallet from browser).
+ * Remove keystore and memory password (full logout / remove wallet from browser)
  */
 export function clearWallet(): void {
   memoryPasswordCache = null;
   try {
     localStorage.removeItem(KEYSTORE_KEY);
-  } catch (e) {
-    // ignore
-  }
+  } catch (e) {}
 }
 
 /**
- * Reset wallet for new election. This will remove the existing wallet
- * and allow generation of a new one with a new password.
- * Only use this when explicitly requested by the user and confirmed
- * that they understand the consequences.
+ * Removes the existing wallet and allow generation of a new one with a new password
  */
 export async function resetWalletForNewElection(): Promise<void> {
-  // Clear everything
   clearWallet();
-
-  // Force new wallet generation on next ensure
-  const wallet = await ensureWallet();
-  return;
+  await ensureWallet();
 }
