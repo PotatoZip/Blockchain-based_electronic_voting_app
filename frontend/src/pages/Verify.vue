@@ -103,7 +103,7 @@ onMounted(() => {
 
     <h1 class="text-2xl font-bold text-gray-900 mb-1">Identity verification</h1>
     <p class="text-gray-600 mb-6">
-      Enter your PESEL and code sent to your email.
+      Enter your PESEL and code from mail message
     </p>
 
     <form @submit.prevent="submit" class="space-y-4">

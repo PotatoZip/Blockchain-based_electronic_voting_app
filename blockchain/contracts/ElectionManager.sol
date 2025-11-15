@@ -4,9 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract ElectionManager is Ownable {
-    // electionId => choiceId => count
     mapping(uint256 => mapping(uint256 => uint256)) public votesCount;
-    // zhashowany identyfikator wyborcy dla danych wyborów
     mapping(bytes32 => bool) public hasVoted;
 
     event VoteCast(

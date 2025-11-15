@@ -1,3 +1,5 @@
+"""URL configurations for the authentication app, including election-related endpoints"""
+
 from django.urls import path
 from .views import (
     ElectionListView,

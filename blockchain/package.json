@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "compile": "hardhat compile && npm run abi:copy",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia && npm run abi:copy",
+    "smoke:sepolia": "hardhat run scripts/smoke_vote.js --network sepolia",
+    "check:rpc": "hardhat run scripts/test_connection.js --network sepolia",
+    "abi:copy": "node scripts/copy_abi.js",
+    "clean": "hardhat clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

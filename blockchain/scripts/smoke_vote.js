@@ -1,4 +1,3 @@
-// scripts/smoke_vote.js
 require("dotenv").config();
 const hre = require("hardhat");
 const { ethers } = hre;
@@ -12,7 +11,6 @@ async function main() {
   if (!addr) throw new Error("Brak CONTRACT_ADDRESS w .env");
 
   const contract = await ethers.getContractAt("ElectionManager", addr);
-
   const electionId = 1;
   const choiceId = 2;
   const pesel = "12345678901";

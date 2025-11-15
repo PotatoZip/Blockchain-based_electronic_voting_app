@@ -116,7 +116,6 @@ function fmt(d: string) {
             </label>
           </div>
         </div>
-
         <div
           class="flex-1 bg-gray-100 rounded-3xl border border-gray-100 shadow-xl p-6"
         >
@@ -138,7 +137,6 @@ function fmt(d: string) {
             />
           </div>
         </div>
-
         <button
           @click="
             dateFrom = '';
@@ -151,8 +149,6 @@ function fmt(d: string) {
           <span>Clear Filters</span>
         </button>
       </div>
-
-      <!-- States -->
       <div v-if="loading" class="text-gray-600">Loading…</div>
       <div v-else-if="error" class="text-red-600">Error: {{ error }}</div>
       <div v-else-if="elections.length === 0" class="text-gray-500">

@@ -1,9 +1,9 @@
+"""Create or update voters from a CSV file for a specific election"""
+
 from django.core.management.base import BaseCommand, CommandError
 from authentication.models import Voter, Election
 
-import csv
-import random
-import string
+import csv, random, string
 
 
 class Command(BaseCommand):
@@ -47,7 +47,6 @@ class Command(BaseCommand):
                     )
                 else:
                     if options.get("update_existing"):
-                        # update allowed fields
                         voter.email = email or voter.email
                         voter.verification_code = (
                             verification_code or voter.verification_code

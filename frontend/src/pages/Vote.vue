@@ -71,12 +71,11 @@ async function castVote() {
     const data = await res.json();
     if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
 
-    // Zapisz informację o oddanym głosie
     if (election.value) {
       sessionStorage.setItem(`has_voted_${election.value.id}`, "true");
     }
 
-    alert(`✅ Vote submitted.\nTx: ${data.txHash}`);
+    alert(`Vote submitted.\nTx: ${data.txHash}`);
 
     if (typeof data.next_nonce === "number") {
       localNonce.value = data.next_nonce;
@@ -105,8 +104,6 @@ onMounted(fetchElection);
   <section
     class="mx-auto max-w-2xl mt-12 bg-white rounded-3xl border border-gray-100 shadow-2xl p-6"
   >
-    <!-- ResetWallet usunięty, dostępny tylko w navbarze -->
-
     <header class="mb-4">
       <h1 class="text-2xl font-bold text-gray-900">Cast your vote</h1>
     </header>
@@ -115,9 +112,6 @@ onMounted(fetchElection);
     <div v-else-if="error" class="text-red-600">{{ error }}</div>
 
     <div v-else-if="election">
-      <h2 class="text-xl font-semibold text-gray-900">{{ election.name }}</h2>
-      <p class="text-gray-600 mt-1">{{ election.description }}</p>
-
       <div class="mt-6 space-y-3">
         <label
           v-for="c in election.choices || []"

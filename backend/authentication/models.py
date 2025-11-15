@@ -1,10 +1,12 @@
+"""Models for the election system, including elections, choices, voters"""
+
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
-import uuid
 
 
 class Election(models.Model):
+    """Model representing an election event"""
+
     name = models.CharField(max_length=300)
     description = models.TextField(blank=True, null=True)
     start_date = models.DateTimeField()
@@ -12,6 +14,8 @@ class Election(models.Model):
 
 
 class Choice(models.Model):
+    """Model representing a choice/option in an election"""
+
     name = models.CharField(max_length=300)
     description = models.TextField(blank=True, null=True)
     election = models.ForeignKey(
@@ -20,6 +24,8 @@ class Choice(models.Model):
 
 
 class Voter(models.Model):
+    """Model representing a voter registered for an election"""
+
     pesel = models.CharField(max_length=11)
     verification_code = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
@@ -34,7 +40,9 @@ class Voter(models.Model):
 
 
 class VotingSession(models.Model):
-    session_id = models.CharField(max_length=64, unique=True)  # uuid4 hex
+    """Model representing a voting session for a voter"""
+
+    session_id = models.CharField(max_length=64, unique=True)
     pesel = models.CharField(max_length=11)
     email = models.CharField(max_length=200, blank=True, null=True)
     election_id = models.IntegerField()
@@ -42,16 +50,17 @@ class VotingSession(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_verified = models.BooleanField(default=False)
     has_voted = models.BooleanField(default=False)
-
-    # anty-replay dla podpisów użytkownika
     next_nonce = models.BigIntegerField(default=1)
 
     def is_expired(self) -> bool:
-        # przykładowo 2h
-        return (timezone.now() - self.created_at).total_seconds() > 2 * 3600
+        return (timezone.now() - self.created_at).total_seconds() > 3600
 
 
 class AuthChallenge(models.Model):
+    """Model representing an authentication challenge for a public address
+    it is used to verify ownership of the address by signing the nonce
+    """
+
     address = models.CharField(max_length=64, db_index=True)
     nonce = models.CharField(max_length=128)
     expires_at = models.DateTimeField(db_index=True)

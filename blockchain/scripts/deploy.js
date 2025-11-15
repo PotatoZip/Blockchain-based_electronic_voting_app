@@ -1,6 +1,5 @@
-// scripts/deploy.js
 require("dotenv").config();
-const hre = require("hardhat"); // daje Ci { ethers } w v6
+const hre = require("hardhat");
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
@@ -9,8 +8,8 @@ async function main() {
   const Factory = await hre.ethers.getContractFactory("ElectionManager");
   const contract = await Factory.deploy(deployer.address);
 
-  await contract.waitForDeployment(); // v6
-  const address = await contract.getAddress(); // v6
+  await contract.waitForDeployment();
+  const address = await contract.getAddress();
 
   console.log("ElectionManager deployed at:", address);
 }
