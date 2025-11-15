@@ -1,29 +1,22 @@
-from datetime import datetime, time, timedelta
-import uuid, secrets
-
-from django.conf import settings
-from django.utils import timezone
-from django.db.models import QuerySet
+"""Views related to elections listing, authentication via signed challenges"""
 
 from rest_framework import permissions
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from eth_account import Account
 from eth_account.messages import encode_defunct
+from datetime import datetime, time, timedelta
+from django.conf import settings
+from django.utils import timezone
+from django.db.models import QuerySet
+import uuid, secrets
 
 from .models import Election, Voter, VotingSession, AuthChallenge
 from .serializers import ElectionListSerializer, ElectionDetailSerializer
-from .client import voter_key, has_voted_onchain, mark_voted_and_count
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.utils import timezone
-
-from .client import contract
+from .client import voter_key, has_voted_onchain, mark_voted_and_count, contract
 
 
-# --------- helper ----------
 def parse_date(d: str | None):
     if not d:
         return None
@@ -34,8 +27,9 @@ def parse_date(d: str | None):
         return None
 
 
-# --------- list/detail ----------
 class ElectionListView(ListAPIView):
+    """View for listing elections with optional filtering by status and date range"""
+
     serializer_class = ElectionListSerializer
 
     def get_queryset(self) -> QuerySet[Election]:
@@ -62,15 +56,14 @@ class ElectionListView(ListAPIView):
 
 
 class ElectionDetailView(RetrieveAPIView):
+    """View for retrieving detailed information about a specific election"""
+
     queryset = Election.objects.all()
     serializer_class = ElectionDetailSerializer
 
 
-# --------- auth: challenge -> verify ----------
 class ChallengeView(APIView):
-    """
-    Front wysyła { address }, backend zwraca nonce do podpisania.
-    """
+    """View for generating a nonce challenge for a given address to sign"""
 
     permission_classes = [permissions.AllowAny]
 
@@ -92,10 +85,7 @@ class ChallengeView(APIView):
 
 
 class VerifyView(APIView):
-    """
-    Front wysyła: { pesel, code, election_id, address, signature }.
-    signature = signMessage(nonce) z ChallengeView.
-    """
+    """Verify voter's identity by checking signed challenge and voter credentials"""
 
     permission_classes = [permissions.AllowAny]
 
@@ -139,15 +129,12 @@ class VerifyView(APIView):
             next_nonce=1,
         )
 
-        # zaznaczamy w modelu wyborcy, że przeszedł weryfikację (aplikacyjna flaga)
         try:
             voter.is_authenticated = True
             voter.save(update_fields=["is_authenticated"])
         except Exception:
-            # Nie przerywamy flow jeśli zapis do DB się nie uda - logi będą w serwerze
             pass
 
-        # challenge zużyty
         ch.delete()
 
         return Response(
@@ -162,15 +149,7 @@ class VerifyView(APIView):
 
 
 class CastVoteView(APIView):
-    """
-    Front wysyła:
-    {
-      session_token,
-      choice_id,
-      signature   // podpis: signMessage(`vote:${election_id}:${choice_id}:${current_nonce}`)
-    }
-    Backend weryfikuje podpis i relayuje transakcję.
-    """
+    """Cast a vote for a given choice in an election, verifying voter's session and signature"""
 
     permission_classes = [permissions.AllowAny]
 
@@ -182,7 +161,6 @@ class CastVoteView(APIView):
         if not session_token or choice_id is None or not signature:
             return Response({"detail": "Missing fields"}, status=400)
 
-        # sesja
         try:
             sess = VotingSession.objects.get(
                 session_id=session_token, election_id=election_id, is_verified=True
@@ -193,7 +171,6 @@ class CastVoteView(APIView):
         if sess.is_expired():
             return Response({"detail": "Session expired"}, status=401)
 
-        # okno czasowe wyborów
         try:
             election = Election.objects.get(pk=election_id)
         except Election.DoesNotExist:
@@ -208,7 +185,6 @@ class CastVoteView(APIView):
         except Voter.DoesNotExist:
             return Response({"detail": "Voter not found"}, status=404)
 
-        # jeśli lokalna flaga pokazuje, że już głosował — zablokuj
         if getattr(voter, "has_voted", False):
             return Response({"detail": "Already voted (local)"}, status=409)
 
@@ -219,25 +195,20 @@ class CastVoteView(APIView):
         if signer.lower() != (sess.public_address or "").lower():
             return Response({"detail": "Bad signature"}, status=403)
 
-        # sprawdzenie on-chain (voter_key)
         vkey = voter_key(sess.pesel, election_id, settings.SECRET_SALT)
         if has_voted_onchain(vkey):
             return Response({"detail": "Already voted on-chain"}, status=409)
 
-        # relay transakcji
         tx_hash = mark_voted_and_count(election_id, vkey, int(choice_id))
 
-        # aktualizacja sesji
         sess.has_voted = True
         sess.next_nonce = sess.next_nonce + 1
         sess.save(update_fields=["has_voted", "next_nonce"])
 
-        # zaktualizuj aplikacyjny stan wyborcy
         try:
             voter.has_voted = True
             voter.save(update_fields=["has_voted"])
         except Exception:
-            # Nie blokujemy użytkownika jeśli update nie powiedzie się
             pass
 
         return Response(
@@ -251,20 +222,16 @@ class CastVoteView(APIView):
 
 
 class ElectionResultsView(APIView):
-    """
-    Returns per-choice counts for a given election by querying the smart contract.
-    """
+    """Returns per-choice counts for a given election by querying the smart contract"""
 
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, election_id: int):
-        # ensure election exists
         try:
             election = Election.objects.get(pk=election_id)
         except Election.DoesNotExist:
             return Response({"detail": "Election not found"}, status=404)
 
-        # Optionally restrict to archive only
         now = timezone.now()
         if election.end_date > now:
             return Response({"detail": "Election not finished"}, status=400)

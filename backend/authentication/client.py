@@ -1,32 +1,39 @@
+"""Integration with blockchain for voter authentication and vote counting"""
+
 import os, json
 from web3 import Web3
 from eth_account import Account
 from django.conf import settings
 from eth_utils import keccak, to_hex
 
+# Alchemy (Web3) setup
 RPC = f"https://eth-sepolia.g.alchemy.com/v2/{os.environ['ALCHEMY_API_KEY']}"
 w3 = Web3(Web3.HTTPProvider(RPC))
 
+# Contract and relayer setup
 CONTRACT_ADDR = Web3.to_checksum_address(os.environ["CONTRACT_ADDRESS"])
 RELAYER_PK = os.environ["DEPLOYER_PRIVATE_KEY"]
 relayer = Account.from_key(RELAYER_PK)
 
+# Load ABI and contract instance
 ABI_PATH = os.path.join(settings.BASE_DIR, "abi", "ElectionManager.json")
 with open(ABI_PATH, "r") as f:
     ABI = json.load(f)["abi"]
-
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi=ABI)
 
 
 def voter_key(pesel: str, election_id: int, salt: str) -> str:
+    """Generates a unique voter key based on pesel, election ID, and a secret salt."""
     return to_hex(keccak(text=f"{pesel}:{election_id}:{salt}"))
 
 
 def has_voted_onchain(voter_key_hex: str) -> bool:
+    """Checks if a voter has already voted on the blockchain."""
     return contract.functions.hasVoted(voter_key_hex).call()
 
 
 def mark_voted_and_count(election_id: int, voter_key_hex: str, choice_id: int) -> str:
+    """Marks a voter as having voted and counts their vote on-chain."""
     nonce = w3.eth.get_transaction_count(relayer.address)
     tx = contract.functions.markVotedAndCount(
         election_id, voter_key_hex, choice_id
@@ -37,7 +44,7 @@ def mark_voted_and_count(election_id: int, voter_key_hex: str, choice_id: int) -
             "gas": 250_000,
             "maxFeePerGas": w3.to_wei("15", "gwei"),
             "maxPriorityFeePerGas": w3.to_wei("1.5", "gwei"),
-            "chainId": 11155111,  # Sepolia
+            "chainId": 11155111,  # Sepolia chain ID
         }
     )
     signed = relayer.sign_transaction(tx)
@@ -46,7 +53,6 @@ def mark_voted_and_count(election_id: int, voter_key_hex: str, choice_id: int) -
     elif hasattr(signed, "raw_transaction"):
         raw = signed.raw_transaction
     else:
-        # Provide a helpful error if neither attribute is present
         raise AttributeError(
             "Signed transaction has no rawTransaction/raw_transaction attribute; check web3/eth-account versions"
         )
