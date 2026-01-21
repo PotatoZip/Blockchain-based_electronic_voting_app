@@ -117,7 +117,7 @@ class VerifyView(APIView):
                 pesel=pesel, election_id=election_id, verification_code=code
             )
         except Voter.DoesNotExist:
-            return Response({"detail": "Invalid verification"}, status=403)
+            return Response({"detail": "Invalid verification code"}, status=403)
 
         sess = VotingSession.objects.create(
             session_id=uuid.uuid4().hex,

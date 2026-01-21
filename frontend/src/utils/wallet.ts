@@ -74,9 +74,6 @@ export function clearWalletSession(): void {
   memoryPasswordCache = null;
 }
 
-/**
- * Remove keystore and memory password (full logout / remove wallet from browser)
- */
 export function clearWallet(): void {
   memoryPasswordCache = null;
   try {
@@ -84,9 +81,6 @@ export function clearWallet(): void {
   } catch (e) {}
 }
 
-/**
- * Removes the existing wallet and allow generation of a new one with a new password
- */
 export async function resetWalletForNewElection(): Promise<void> {
   clearWallet();
   await ensureWallet();
