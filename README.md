@@ -1,6 +1,6 @@
 # Blockchain-based Electronic Voting App
 
-A secure, transparent electronic voting system built on Ethereum blockchain with Django backend and Vue.js frontend.
+A secure, transparent electronic voting system built on Ethereum blockchain with Django backend and Vue.js frontend. Project created as part of a thesis in Computer Science at the Cracow University of Technology.
 
 ## Features
 
@@ -36,9 +36,8 @@ cd Blockchain-based_electronic_voting_app
 docker compose up --build
 ```
 
-## Usage
 
-### Management Commands
+## Management Commands
 
 The backend provides several Django management commands for administration and debugging:
 
@@ -61,17 +60,6 @@ python manage.py get_results <election_id> [--json] [--verbose]
 ```bash
 python manage.py voters_csv_import
 ```
-
-For detailed documentation, see [`backend/tools/management/commands/README.md`](backend/tools/management/commands/README.md).
-
-### API Endpoints
-
-- `GET /api/elections/` - List all elections (with filtering)
-- `GET /api/elections/{id}/` - Election details
-- `POST /api/challenge/` - Request authentication challenge
-- `POST /api/verify/` - Verify voter credentials and create session
-- `POST /api/elections/{id}/vote/` - Cast a vote
-- `GET /api/elections/{id}/results/` - Get election results
 
 ## Development
 
